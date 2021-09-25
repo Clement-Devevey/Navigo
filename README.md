@@ -1,6 +1,6 @@
 # Navigo
 Navigo (web browser) made by myself, following the openclassroom tutorial
-<p>Since one dll is too big to get stored on this github, you will find the exe at this google drive : https://drive.google.com/file/d/1pyB2IBeQAuCls9vI1b5XRoIRD2rZ90sK/view?usp=sharing </p>
+<p>Since one dll is too big to get stored on this github, you will find the zip with everything you need to run this exe : https://filesender.renater.fr/?s=download&token=6e5962fa-149b-4747-bfb3-3c13acef3fc7 </p>
 This web browser can : 
 - open and close tabs.
 - refresh, go to home, cancel loading.
