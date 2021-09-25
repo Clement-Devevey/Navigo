@@ -9,4 +9,6 @@ This web browser can :
 - set name for each tab according to the website. (for instance, visiting https://www.google.fr/ will set google.
 - show the progress of loading.
 
+Here is how does it look like :
+
 ![screenshot](images/screenshot_navigo.png)
