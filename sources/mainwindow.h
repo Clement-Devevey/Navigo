@@ -2,15 +2,16 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QWidget>
+
 #include <QMessageBox>
 #include <QWebEngineView>
 #include <vector>
 #include<QDebug>
 #include<QProgressBar>
-#include<QBoxLayout>
 #include<QLineEdit>
-#include<QDir>
+
+
+#include "winhistory.h"
 
 namespace Ui {
 class MainWindow;
@@ -27,6 +28,8 @@ public:
     MainWindow& tabSetup();
     MainWindow& statusBarSetup();
     MainWindow& layoutSetup();
+    void writeHistory (const QString& url);
+    void ShowHistory();
     ~MainWindow();
 
 private:
@@ -38,11 +41,14 @@ private:
     QWidget* centerWidget;
     QLineEdit* address;
 
+    QFile* f_history;
+
 private slots:
     void slotCloseTab(int index);
     void slotSetAddressText();
     void slotSetAddressText(int index);
     void slotNewUrl();
+
 
     void on_actionAbout_QT_triggered();
     void on_actionAbout_triggered();
@@ -53,6 +59,7 @@ private slots:
     void on_actionStop_loading_triggered();
     void on_actionPrevious_page_triggered();
     void on_actionNext_page_triggered();
+    void on_actionHistory_triggered();
 
 
 

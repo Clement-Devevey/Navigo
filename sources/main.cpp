@@ -2,11 +2,11 @@
 #include<QApplication>
 #include<QWidget>
 
-int main(int arc, char* arv[])
+int main(int argc, char* argv[])
 {
-    QApplication myApp(arc, arv);
+    QApplication app(argc, argv);
     MainWindow myMainWindow;
     myMainWindow.show();
-    return myApp.exec();
+    return app.exec();
 
 }

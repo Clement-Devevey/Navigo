@@ -23,7 +23,7 @@
      <height>20</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuClement">
+   <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
     </property>
@@ -31,15 +31,22 @@
     <addaction name="actionClose_tab"/>
     <addaction name="actionQuit"/>
    </widget>
-   <widget class="QMenu" name="menuNavigation">
+   <widget class="QMenu" name="menuBrowsing">
     <property name="title">
      <string>Browsing</string>
     </property>
+    <widget class="QMenu" name="menuHistory">
+     <property name="title">
+      <string>History</string>
+     </property>
+     <addaction name="actionHistory"/>
+    </widget>
     <addaction name="actionPrevious_page"/>
     <addaction name="actionNext_page"/>
     <addaction name="actionRefresh"/>
     <addaction name="actionStop_loading"/>
     <addaction name="actionHome"/>
+    <addaction name="menuHistory"/>
    </widget>
    <widget class="QMenu" name="about">
     <property name="title">
@@ -48,8 +55,8 @@
     <addaction name="actionAbout"/>
     <addaction name="actionAbout_QT"/>
    </widget>
-   <addaction name="menuClement"/>
-   <addaction name="menuNavigation"/>
+   <addaction name="menuFile"/>
+   <addaction name="menuBrowsing"/>
    <addaction name="about"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
@@ -123,6 +130,11 @@
   <action name="actionHome">
    <property name="text">
     <string>Home</string>
+   </property>
+  </action>
+  <action name="actionHistory">
+   <property name="text">
+    <string>History</string>
    </property>
   </action>
  </widget>

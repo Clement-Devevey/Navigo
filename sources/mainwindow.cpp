@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     statusBarSetup();
     tabSetup();
     layoutSetup();
+    ShowHistory();
     connectionSetup();
 
 }
@@ -25,12 +26,13 @@ void MainWindow::toolBarSetup()
     ui->toolBar->addSeparator();
 
     /* TAB */
-    qInfo() << "chemin : "<<QDir::currentPath();
     ui->actionNew_tab->setIcon(QIcon(QDir::currentPath()+"/addTab.ico"));
     ui->toolBar->addAction(ui->actionNew_tab);
     ui->actionClose_tab->setIcon(QIcon(QDir::currentPath()+"/closeTab.ico"));
     ui->toolBar->addAction(ui->actionClose_tab);
     ui->toolBar->addSeparator();
+    ui->actionHistory->setIcon(QIcon(QDir::currentPath()+"/history.ico"));
+    ui->toolBar->addAction(ui->actionHistory);
 
     /* home refresh stop loading */
     ui->actionHome->setIcon(QIcon(QDir::currentPath()+"/home.ico"));
@@ -48,6 +50,7 @@ void MainWindow::toolBarSetup()
     ui->toolBar->addAction(ui->actionAbout_QT);
 
     /* Quit */
+
     ui->actionQuit->setIcon(QIcon(QDir::currentPath()+"/door_in.ico"));
     ui->toolBar->addAction(ui->actionQuit);
 
@@ -68,6 +71,7 @@ MainWindow& MainWindow::tabSetup()
     /* Init the vector to contain the homepage */
     listTab.push_back(new QWebEngineView);
     tab = new QTabWidget;
+
     listTab[0]->setUrl(QUrl("https://www.ciose.fr/"));
     tab->addTab(listTab[0], "Home");
     tab->setTabsClosable(true);
@@ -97,7 +101,54 @@ MainWindow& MainWindow::layoutSetup()
     setCentralWidget(centerWidget);
     return *this;
 }
+void MainWindow::writeHistory (const QString& url)
+{
+    /* History is written from the oldest URL to the most recent one */
 
+    f_history = new QFile(QDir::currentPath()+"/history.txt");
+    if ((!f_history->open(QIODevice::WriteOnly | QIODevice::Append))) //Append allows us to store the new content at the end of the file
+    {
+        delete f_history;
+        return;
+    }
+
+    QTextStream stream(f_history);
+
+    /* Writing current web page */
+    stream << url + " " + QDateTime::currentDateTime().toString() + "\n";
+
+    delete f_history;
+}
+
+void MainWindow::ShowHistory()
+{
+    ui->menuHistory->clear();
+    ui->menuHistory->addAction(ui->actionHistory);
+
+    f_history = new QFile(QDir::currentPath()+"/history.txt");
+    if ((!f_history->open(QIODevice::ReadOnly )))
+    {
+        delete f_history;
+        return;
+    }
+
+    QTextStream* stream = new QTextStream(f_history);
+    vector<QString>* listHistory = new vector<QString>;
+
+    while (!(stream->atEnd()))
+    {
+        listHistory->push_back(stream->readLine());
+    }
+
+    for (int i = 1 ; i<6 && i<=listHistory->size() ; i++)
+    {
+        ui->menuHistory->addAction((*listHistory)[listHistory->size()-i]);
+    }
+
+    delete listHistory;
+    delete stream;
+    delete f_history;
+}
 
 void MainWindow::slotCloseTab(int index)
 {
@@ -106,13 +157,32 @@ void MainWindow::slotCloseTab(int index)
         QMessageBox::critical(this, "Attention", "There is no tab to remove !");
         return;
     }
+
     if (tab->count()==1) //Obligé d'utiliser count(), sinon quand on ferme l'onglet de gauche, il croit que c'est le dernier élément
     {
         address->setVisible(false);
     }
     tab->removeTab(index);
     listTab.erase(listTab.begin() + index);
-    this->slotSetAddressText();
+
+    if(listTab.size() == 0)
+    {
+        return;
+    }
+
+    QStringList* list1 = new QStringList(listTab[tab->currentIndex()]->url().toDisplayString().split(QLatin1Char('.')));
+    if(listTab[tab->currentIndex()]->url().toDisplayString().contains("www"))
+    {
+        tab->setTabText(tab->currentIndex(), (*list1)[1]);
+    }
+
+    else
+    {
+        tab->setTabText(tab->currentIndex(), (*list1)[0]);
+    }
+
+    address->setText(listTab[tab->currentIndex()]->url().toDisplayString());
+    delete list1;
 }
 
 void MainWindow::slotSetAddressText()
@@ -121,6 +191,8 @@ void MainWindow::slotSetAddressText()
     {
         return;
     }
+    writeHistory(listTab[tab->currentIndex()]->url().toDisplayString());
+    ShowHistory();
     QStringList* list1 = new QStringList(listTab[tab->currentIndex()]->url().toDisplayString().split(QLatin1Char('.')));
     if(listTab[tab->currentIndex()]->url().toDisplayString().contains("www"))
     {
@@ -260,6 +332,35 @@ void MainWindow::on_actionNext_page_triggered()
     listTab[tab->currentIndex()]->page()->triggerAction(QWebEnginePage::Forward);
 }
 
+void MainWindow::on_actionHistory_triggered()
+{
+
+    f_history = new QFile(QDir::currentPath()+"/history.txt");
+    if ((!f_history->open(QIODevice::ReadOnly )))
+    {
+        delete f_history;
+        return;
+    }
+
+    QTextStream* stream = new QTextStream(f_history);
+    vector<QString>* listHistory = new vector<QString>;
+
+    while (!(stream->atEnd()))
+    {
+        listHistory->push_back(stream->readLine());
+    }
+
+    QString historyText;
+    for (size_t i = listHistory->size() ; i>0 ; i--)
+    {
+        historyText += (*listHistory)[i-1] + "\n";
+    }
+    winHistory(historyText).exec();
+    delete listHistory;
+    delete stream;
+    delete f_history;
+}
+
 MainWindow::~MainWindow()
 {
 
@@ -268,6 +369,5 @@ MainWindow::~MainWindow()
         listTab[i]->close();
         delete listTab[i];
     }
-
     delete ui;
 }

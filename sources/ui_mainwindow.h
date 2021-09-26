@@ -33,10 +33,12 @@ public:
     QAction *actionAbout;
     QAction *actionAbout_QT;
     QAction *actionHome;
+    QAction *actionHistory;
     QWidget *centralwidget;
     QMenuBar *menubar;
-    QMenu *menuClement;
-    QMenu *menuNavigation;
+    QMenu *menuFile;
+    QMenu *menuBrowsing;
+    QMenu *menuHistory;
     QMenu *about;
     QToolBar *toolBar;
 
@@ -65,16 +67,20 @@ public:
         actionAbout_QT->setObjectName(QString::fromUtf8("actionAbout_QT"));
         actionHome = new QAction(MainWindow);
         actionHome->setObjectName(QString::fromUtf8("actionHome"));
+        actionHistory = new QAction(MainWindow);
+        actionHistory->setObjectName(QString::fromUtf8("actionHistory"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
         menubar->setGeometry(QRect(0, 0, 800, 20));
-        menuClement = new QMenu(menubar);
-        menuClement->setObjectName(QString::fromUtf8("menuClement"));
-        menuNavigation = new QMenu(menubar);
-        menuNavigation->setObjectName(QString::fromUtf8("menuNavigation"));
+        menuFile = new QMenu(menubar);
+        menuFile->setObjectName(QString::fromUtf8("menuFile"));
+        menuBrowsing = new QMenu(menubar);
+        menuBrowsing->setObjectName(QString::fromUtf8("menuBrowsing"));
+        menuHistory = new QMenu(menuBrowsing);
+        menuHistory->setObjectName(QString::fromUtf8("menuHistory"));
         about = new QMenu(menubar);
         about->setObjectName(QString::fromUtf8("about"));
         MainWindow->setMenuBar(menubar);
@@ -82,17 +88,19 @@ public:
         toolBar->setObjectName(QString::fromUtf8("toolBar"));
         MainWindow->addToolBar(Qt::TopToolBarArea, toolBar);
 
-        menubar->addAction(menuClement->menuAction());
-        menubar->addAction(menuNavigation->menuAction());
+        menubar->addAction(menuFile->menuAction());
+        menubar->addAction(menuBrowsing->menuAction());
         menubar->addAction(about->menuAction());
-        menuClement->addAction(actionNew_tab);
-        menuClement->addAction(actionClose_tab);
-        menuClement->addAction(actionQuit);
-        menuNavigation->addAction(actionPrevious_page);
-        menuNavigation->addAction(actionNext_page);
-        menuNavigation->addAction(actionRefresh);
-        menuNavigation->addAction(actionStop_loading);
-        menuNavigation->addAction(actionHome);
+        menuFile->addAction(actionNew_tab);
+        menuFile->addAction(actionClose_tab);
+        menuFile->addAction(actionQuit);
+        menuBrowsing->addAction(actionPrevious_page);
+        menuBrowsing->addAction(actionNext_page);
+        menuBrowsing->addAction(actionRefresh);
+        menuBrowsing->addAction(actionStop_loading);
+        menuBrowsing->addAction(actionHome);
+        menuBrowsing->addAction(menuHistory->menuAction());
+        menuHistory->addAction(actionHistory);
         about->addAction(actionAbout);
         about->addAction(actionAbout_QT);
 
@@ -126,8 +134,10 @@ public:
         actionAbout->setText(QCoreApplication::translate("MainWindow", "About", nullptr));
         actionAbout_QT->setText(QCoreApplication::translate("MainWindow", "About QT", nullptr));
         actionHome->setText(QCoreApplication::translate("MainWindow", "Home", nullptr));
-        menuClement->setTitle(QCoreApplication::translate("MainWindow", "File", nullptr));
-        menuNavigation->setTitle(QCoreApplication::translate("MainWindow", "Browsing", nullptr));
+        actionHistory->setText(QCoreApplication::translate("MainWindow", "History", nullptr));
+        menuFile->setTitle(QCoreApplication::translate("MainWindow", "File", nullptr));
+        menuBrowsing->setTitle(QCoreApplication::translate("MainWindow", "Browsing", nullptr));
+        menuHistory->setTitle(QCoreApplication::translate("MainWindow", "History", nullptr));
         about->setTitle(QCoreApplication::translate("MainWindow", "?", nullptr));
         toolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", nullptr));
     } // retranslateUi
