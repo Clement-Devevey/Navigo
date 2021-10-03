@@ -4,12 +4,9 @@
 #include <QMainWindow>
 
 #include <QMessageBox>
-#include <QWebEngineView>
-#include <vector>
 #include<QDebug>
 #include<QProgressBar>
 #include<QLineEdit>
-
 
 #include "winhistory.h"
 
@@ -30,6 +27,7 @@ public:
     MainWindow& layoutSetup();
     void writeHistory (const QString& url);
     void ShowHistory();
+    void setNextPreviousPage();
     ~MainWindow();
 
 private:
@@ -43,12 +41,11 @@ private:
 
     QFile* f_history;
 
-private slots:
+public slots:
     void slotCloseTab(int index);
     void slotSetAddressText();
     void slotSetAddressText(int index);
     void slotNewUrl();
-
 
     void on_actionAbout_QT_triggered();
     void on_actionAbout_triggered();
@@ -60,13 +57,6 @@ private slots:
     void on_actionPrevious_page_triggered();
     void on_actionNext_page_triggered();
     void on_actionHistory_triggered();
-
-
-
-
-
-
-
 };
 
 #endif // MAINWINDOW_H

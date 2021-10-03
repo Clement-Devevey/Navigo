@@ -12,7 +12,6 @@ MainWindow::MainWindow(QWidget *parent) :
     layoutSetup();
     ShowHistory();
     connectionSetup();
-
 }
 
 void MainWindow::toolBarSetup()
@@ -20,8 +19,10 @@ void MainWindow::toolBarSetup()
     /* Setup tool bar */
     /* Next/Prev page */
     ui->actionPrevious_page->setIcon(QIcon(QDir::currentPath()+"/previous.ico"));
+    ui->actionPrevious_page->setEnabled(false);
     ui->toolBar->addAction(ui->actionPrevious_page);
     ui->actionNext_page->setIcon(QIcon(QDir::currentPath()+"/next.ico"));
+    ui->actionNext_page->setEnabled(false);
     ui->toolBar->addAction(ui->actionNext_page);
     ui->toolBar->addSeparator();
 
@@ -71,7 +72,6 @@ MainWindow& MainWindow::tabSetup()
     /* Init the vector to contain the homepage */
     listTab.push_back(new QWebEngineView);
     tab = new QTabWidget;
-
     listTab[0]->setUrl(QUrl("https://www.ciose.fr/"));
     tab->addTab(listTab[0], "Home");
     tab->setTabsClosable(true);
@@ -160,6 +160,8 @@ void MainWindow::slotCloseTab(int index)
 
     if (tab->count()==1) //Obligé d'utiliser count(), sinon quand on ferme l'onglet de gauche, il croit que c'est le dernier élément
     {
+        ui->actionPrevious_page->setEnabled(false);
+        ui->actionNext_page->setEnabled(false);
         address->setVisible(false);
     }
     tab->removeTab(index);
@@ -183,10 +185,36 @@ void MainWindow::slotCloseTab(int index)
 
     address->setText(listTab[tab->currentIndex()]->url().toDisplayString());
     delete list1;
+
+    setNextPreviousPage();
+}
+
+void MainWindow::setNextPreviousPage()
+{
+    if (listTab[tab->currentIndex()]->pageAction(QWebEnginePage::Back)->isEnabled() && !(ui->actionPrevious_page->isEnabled()))
+    {
+        ui->actionPrevious_page->setEnabled(true);
+    }
+
+    if (!(listTab[tab->currentIndex()]->pageAction(QWebEnginePage::Forward)->isEnabled()) && ui->actionNext_page->isEnabled())
+    {
+        ui->actionNext_page->setEnabled(false);
+    }
+
+    if (!(listTab[tab->currentIndex()]->pageAction(QWebEnginePage::Back)->isEnabled()) && ui->actionPrevious_page->isEnabled())
+    {
+        ui->actionPrevious_page->setEnabled(false);
+    }
+
+    if (listTab[tab->currentIndex()]->pageAction(QWebEnginePage::Forward)->isEnabled() && !(ui->actionNext_page->isEnabled()))
+    {
+        ui->actionNext_page->setEnabled(true);
+    }
 }
 
 void MainWindow::slotSetAddressText()
 {
+    setNextPreviousPage();
     if(listTab.size() == 0)
     {
         return;
@@ -206,6 +234,8 @@ void MainWindow::slotSetAddressText()
 
     address->setText(listTab[tab->currentIndex()]->url().toDisplayString());
     delete list1;
+
+
 }
 
 void MainWindow::slotSetAddressText(int index)
@@ -248,6 +278,9 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::on_actionNew_tab_triggered()
 {
+    ui->actionPrevious_page->setEnabled(false);
+    ui->actionNext_page->setEnabled(false);
+
     if (listTab.size() == 0)
     {
         address->setVisible(true);
@@ -266,19 +299,7 @@ void MainWindow::on_actionNew_tab_triggered()
 
 void MainWindow::on_actionClose_tab_triggered()
 {
-    if (listTab.size() == 0)
-    {
-        QMessageBox::critical(this, "Attention", "There is no tab to remove !");
-        return;
-    }
-
-    if (listTab.size() == 1)
-    {
-        address->setVisible(false);
-    }
-    tab->removeTab(tab->currentIndex());
-    listTab.erase(listTab.begin() + tab->currentIndex());
-    this->slotSetAddressText();
+    slotCloseTab(tab->currentIndex());
 }
 
 void MainWindow::on_actionHome_triggered()
@@ -343,22 +364,16 @@ void MainWindow::on_actionHistory_triggered()
     }
 
     QTextStream* stream = new QTextStream(f_history);
-    vector<QString>* listHistory = new vector<QString>;
+    QStringList* listHistory = new QStringList;
 
     while (!(stream->atEnd()))
     {
-        listHistory->push_back(stream->readLine());
+        listHistory->prepend(stream->readLine());
     }
-
-    QString historyText;
-    for (size_t i = listHistory->size() ; i>0 ; i--)
-    {
-        historyText += (*listHistory)[i-1] + "\n";
-    }
-    winHistory(historyText).exec();
-    delete listHistory;
+    winHistory *w = new winHistory(*listHistory, &listTab, tab);
+    w->show();
+    //delete listHistory;
     delete stream;
-    delete f_history;
 }
 
 MainWindow::~MainWindow()
