@@ -1,5 +1,5 @@
 # Navigo
-Navigo (web browser) made by myself, following the openclassroom tutorial
+Navigo (web browser), following the openclassroom tutorial
 - Since one dll is too big to get stored on this github, you will find the zip with everything you need to run this exe : https://filesender.renater.fr/?s=download&token=012dc352-c046-43c5-b223-54aa28593b74
 This web browser can : 
 - open and close tabs.
